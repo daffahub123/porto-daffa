@@ -1,451 +1,712 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Github, 
-  Linkedin, 
-  Mail, 
-  MessageCircle, 
-  MapPin, 
-  Cpu, 
-  Code, 
-  Database, 
-  Layout, 
-  ChevronRight,
-  Send,
-  CheckCircle2,
-  AlertCircle
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portofolio Profesional | Web Developer</title>
+    
+    <!-- Fonts: Poppins untuk Heading, Inter untuk Body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js untuk Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-// --- KOMPONEN ANIMASI SCROLL ---
-const FadeIn = ({ children, delay = 0, className = "" }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
+    <!-- Tailwind Config untuk Custom Fonts & Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#111827',
+                        secondary: '#4F46E5',
+                        accent: '#F59E0B',
+                        surface: '#ffffff',
+                        background: '#f8fafc',
+                    }
+                }
+            }
         }
-      },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
+    </script>
 
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ease-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-      } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
+    <style>
+        /* Base & Background Ornaments */
+        body {
+            background-color: #f8fafc;
+            overflow-x: hidden;
+            color: #1f2937;
+        }
 
-// --- DATA MOCKUP ---
-const PROJECTS = [
-  {
-    id: 1,
-    title: "Sistem Manajemen Inventaris",
-    category: "Web Development",
-    desc: "Aplikasi berbasis web untuk melacak barang masuk dan keluar di gudang menggunakan React dan Node.js.",
-    icon: <Database className="w-8 h-8 text-blue-600" />
-  },
-  {
-    id: 2,
-    title: "Analisis Sentimen Twitter",
-    category: "Data Science",
-    desc: "Model Machine Learning untuk menganalisis sentimen cuitan terkait produk teknologi menggunakan Python.",
-    icon: <Cpu className="w-8 h-8 text-emerald-500" />
-  },
-  {
-    id: 3,
-    title: "UI/UX Redesign E-Library",
-    category: "Design",
-    desc: "Perancangan ulang antarmuka aplikasi perpustakaan kampus untuk meningkatkan pengalaman pengguna.",
-    icon: <Layout className="w-8 h-8 text-purple-600" />
-  },
-  {
-    id: 4,
-    title: "API Gateway Microservices",
-    category: "Backend",
-    desc: "Implementasi API Gateway untuk arsitektur microservices pada aplikasi e-learning.",
-    icon: <Code className="w-8 h-8 text-blue-500" />
-  }
-];
+        .bg-pattern {
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
 
-const EXPERIENCES = [
-  {
-    year: "2023 - Sekarang",
-    role: "Asisten Laboratorium Pemrograman",
-    company: "Fakultas Ilmu Komputer",
-    desc: "Membimbing mahasiswa dalam praktikum struktur data dan algoritma."
-  },
-  {
-    year: "2022",
-    role: "Web Developer Intern",
-    company: "Tech Solutions Nusantara",
-    desc: "Membantu pengembangan fitur frontend menggunakan React.js."
-  }
-];
-
-export default function App() {
-  const [aiInterest, setAiInterest] = useState('Semua');
-  const [filteredProjects, setFilteredProjects] = useState(PROJECTS);
-  
-  // Form State
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [formErrors, setFormErrors] = useState({});
-
-  // Inject Font Montserrat & Merriweather & SEO
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
-      body { font-family: 'Montserrat', sans-serif; background-color: #ffffff; color: #0f172a; overflow-x: hidden; }
-      .font-serif { font-family: 'Merriweather', serif; }
-      html { scroll-behavior: smooth; }
-      
-      /* Efek blur pada foto hero */
-      .hero-image-mask {
-        mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-      }
-      
-      /* Ornamen Background */
-      .bg-pattern {
-        background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-        background-size: 24px 24px;
-      }
-    `;
-    document.head.appendChild(style);
-    document.title = "Portofolio | Daffa Rafi Al Faraz";
-    
-    const meta = document.createElement('meta');
-    meta.name = "description";
-    meta.content = "Portofolio dinamis Daffa Rafi Al Faraz. Mahasiswa Sistem Informasi yang ahli dalam pengembangan web, analisis data, dan desain UI/UX.";
-    document.head.appendChild(meta);
-
-    return () => {
-      document.head.removeChild(style);
-      document.head.removeChild(meta);
-    };
-  }, []);
-
-  // Filter Proyek
-  useEffect(() => {
-    if (aiInterest === 'Semua') {
-      setFilteredProjects(PROJECTS);
-    } else {
-      setFilteredProjects(PROJECTS.filter(p => p.category === aiInterest));
-    }
-  }, [aiInterest]);
-
-  // Validasi Form Real-time
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    
-    // Validasi sederhana
-    let errors = { ...formErrors };
-    if (name === 'email') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      errors.email = !emailRegex.test(value) && value.length > 0 ? "Format email tidak valid" : null;
-    }
-    if (name === 'name') errors.name = value.length < 3 && value.length > 0 ? "Nama terlalu pendek" : null;
-    setFormErrors(errors);
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white relative">
-      {/* ORNAMEN BACKGROUND */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/5 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute top-[40%] right-[-5%] w-[30%] h-[30%] bg-emerald-400/5 rounded-full blur-3xl -z-10"></div>
-      
-      {/* HEADER NAV */}
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-black tracking-tighter text-blue-600">DR<span className="text-emerald-500">.</span></h1>
-          <nav className="hidden md:flex gap-8 text-sm font-semibold text-gray-600">
-            <a href="#tentang" className="hover:text-blue-600 transition-colors">Tentang</a>
-            <a href="#pengalaman" className="hover:text-blue-600 transition-colors">Pengalaman</a>
-            <a href="#proyek" className="hover:text-blue-600 transition-colors">Karya</a>
-            <a href="#kontak" className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 transition-all">Hubungi Saya</a>
-          </nav>
-        </div>
-      </header>
-
-      {/* MAIN LAYOUT */}
-      <main className="flex-grow max-w-7xl mx-auto px-6 py-28 flex flex-col lg:flex-row gap-16 relative">
+        .blob-1 {
+            position: absolute; top: -10%; left: -10%; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; z-index: -1; animation: float 10s infinite ease-in-out;
+        }
         
-        {/* LEFT CONTENT AREA */}
-        <div className="lg:w-2/3 space-y-32">
-          
-          {/* Hero Section dengan Foto Besar */}
-          <section id="tentang" className="relative">
-            <FadeIn>
-              <div className="flex flex-col-reverse md:flex-row gap-10 items-center md:items-start">
-                <div className="flex-1 space-y-6 relative z-10">
-                  <div className="inline-block px-4 py-2 rounded-full bg-blue-50 text-blue-600 font-bold text-xs tracking-widest uppercase mb-2 border border-blue-100">
-                    Sistem Informasi 🚀
-                  </div>
-                  <h2 className="font-serif text-5xl md:text-6xl font-black leading-tight text-slate-900">
-                    Hello' im <br/>
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-400">Daffa Rafi Al Faraz</span> 
-                  </h2>
-                  <p className="text-lg text-slate-600 leading-relaxed max-w-lg font-medium">
-                    Halo! Saya Daffa Rafi Al Faraz. Mahasiswa yang antusias menggabungkan logika sistem dan kreativitas desain untuk menciptakan pengalaman pengguna yang luar biasa. ✨
-                  </p>
-                  <div className="flex gap-4 pt-4">
-                    <a href="#proyek" className="px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-blue-600 hover:scale-105 transition-all shadow-xl shadow-slate-900/20">
-                      Lihat Karya
-                    </a>
-                  </div>
-                </div>
+        .blob-2 {
+            position: absolute; bottom: 20%; right: -5%; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; z-index: -1; animation: float 12s infinite ease-in-out reverse;
+        }
 
-                {/* Foto Portrait Besar */}
-                <div className="w-full md:w-[320px] shrink-0 relative group">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-emerald-400 rounded-3xl rotate-3 group-hover:rotate-6 transition-transform duration-500 opacity-20 -z-10"></div>
-                  <div className="aspect-[3/4] rounded-3xl overflow-hidden relative shadow-2xl bg-slate-100 hero-image-mask">
-                    {/* Placeholder gambar portrait - Ganti src dengan foto asli */}
-                    <img 
-                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
-                      alt="Daffa Rafi" 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
-          </section>
+        /* Profile Masking (Blur Bawah) */
+        .profile-mask {
+            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            object-position: top;
+        }
 
-          {/* AI Recommendation & Projects */}
-          <section id="proyek" className="relative">
-            <FadeIn>
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
-                  <Cpu className="w-8 h-8" />
-                </div>
-                <div>
-                  <h3 className="font-serif text-3xl font-bold">Eksplorasi Karya 🎨</h3>
-                  <p className="text-slate-500 font-medium">Pilih kategori untuk memfilter proyek</p>
-                </div>
-              </div>
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+        }
 
-              <div className="flex flex-wrap gap-3 mb-10">
-                {['Semua', 'Web Development', 'Data Science', 'Design', 'Backend'].map(category => (
-                  <button
-                    key={category}
-                    onClick={() => setAiInterest(category)}
-                    className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
-                      aiInterest === category 
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 -translate-y-1' 
-                        : 'bg-white border-2 border-slate-100 text-slate-500 hover:border-blue-200 hover:text-blue-600'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-                {/* Ornamen Garis */}
-                <div className="absolute top-1/2 left-0 w-full h-[1px] bg-slate-100 -z-10"></div>
-                
-                {filteredProjects.map((project, idx) => (
-                  <FadeIn key={project.id} delay={idx * 100}>
-                    <div className="group relative bg-white p-8 rounded-3xl border border-slate-100 hover:border-transparent transition-all duration-300 overflow-hidden cursor-pointer h-full hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-900/5">
-                      {/* Hover Background Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-emerald-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-                      
-                      <div className="mb-6 p-4 bg-slate-50 inline-block rounded-2xl group-hover:scale-110 group-hover:bg-white group-hover:shadow-sm transition-all duration-300">
-                        {project.icon}
-                      </div>
-                      <h4 className="font-serif font-bold text-xl mb-3 group-hover:text-blue-600 transition-colors">{project.title}</h4>
-                      <p className="text-slate-500 text-sm leading-relaxed mb-6 font-medium">{project.desc}</p>
-                      
-                      <div className="flex items-center text-sm font-bold text-slate-400 group-hover:text-emerald-500 transition-colors mt-auto">
-                        Lihat Detail <ChevronRight className="w-5 h-5 ml-1 group-hover:translate-x-2 transition-transform" />
-                      </div>
-                    </div>
-                  </FadeIn>
-                ))}
-              </div>
-            </FadeIn>
-          </section>
+        .typewriter {
+            border-right: 3px solid #4F46E5;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: blink 0.75s step-end infinite;
+        }
 
-          {/* Experience Section */}
-          <section id="pengalaman">
-            <FadeIn>
-              <h3 className="font-serif text-3xl font-bold mb-10">Jejak Pengalaman 💼</h3>
-              <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-blue-600 before:via-emerald-400 before:to-transparent">
-                {EXPERIENCES.map((exp, idx) => (
-                  <FadeIn key={idx} delay={idx * 200} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-600 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 group-hover:bg-emerald-400 transition-colors duration-300 z-10"></div>
-                    <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-6 rounded-2xl border border-slate-100 shadow-sm group-hover:shadow-xl group-hover:border-blue-100 transition-all duration-300">
-                      <div className="flex flex-col mb-2">
-                        <span className="text-sm font-bold text-blue-600 mb-1">{exp.year}</span>
-                        <h4 className="text-xl font-bold font-serif">{exp.role}</h4>
-                      </div>
-                      <p className="text-slate-800 font-semibold text-sm mb-3">{exp.company}</p>
-                      <p className="text-slate-500 text-sm leading-relaxed">{exp.desc}</p>
-                    </div>
-                  </FadeIn>
-                ))}
-              </div>
-            </FadeIn>
-          </section>
+        @keyframes blink { 50% { border-color: transparent; } }
 
-          {/* Contact Section */}
-          <section id="kontak">
-            <FadeIn>
-              <div className="bg-slate-900 rounded-3xl p-10 md:p-16 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full blur-[100px] opacity-50"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-400 rounded-full blur-[100px] opacity-30"></div>
-                
-                <div className="relative z-10 flex flex-col md:flex-row gap-12">
-                  <div className="flex-1">
-                    <h3 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">Mari Berkolaborasi! 🤝</h3>
-                    <p className="text-slate-400 mb-8 leading-relaxed">Punya ide proyek menarik atau peluang karir? Jangan ragu untuk menyapa. Saya selalu terbuka untuk diskusi.</p>
-                    
-                    <a 
-                      href="https://wa.me/62881025610837" 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-4 bg-[#25D366] text-white p-4 rounded-2xl hover:scale-105 hover:shadow-lg hover:shadow-[#25D366]/30 transition-all group"
-                    >
-                      <MessageCircle className="w-8 h-8 group-hover:animate-bounce" />
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-wider opacity-90">WhatsApp Langsung</p>
-                        <p className="font-black text-xl">0881-0256-10837</p>
-                      </div>
-                    </a>
-                  </div>
+        /* Scroll Reveal Utility */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-                  <form className="flex-1 space-y-5 bg-white p-8 rounded-2xl shadow-2xl" onSubmit={(e) => e.preventDefault()}>
-                    <div>
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Nama</label>
-                      <input 
-                        type="text" 
-                        name="name"
-                        value={formData.name}
-                        onChange={handleFormChange}
-                        className={`w-full px-5 py-3 rounded-xl bg-slate-50 border ${formErrors.name ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-600'} focus:outline-none focus:ring-4 focus:ring-blue-600/10 transition-all font-medium`} 
-                        placeholder="Nama Anda" 
-                      />
-                      {formErrors.name && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {formErrors.name}</p>}
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Email</label>
-                      <input 
-                        type="email" 
-                        name="email"
-                        value={formData.email}
-                        onChange={handleFormChange}
-                        className={`w-full px-5 py-3 rounded-xl bg-slate-50 border ${formErrors.email ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-600'} focus:outline-none focus:ring-4 focus:ring-blue-600/10 transition-all font-medium`} 
-                        placeholder="email@anda.com" 
-                      />
-                      {formErrors.email && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {formErrors.email}</p>}
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Pesan</label>
-                      <textarea 
-                        name="message"
-                        value={formData.message}
-                        onChange={handleFormChange}
-                        rows="3" 
-                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all font-medium resize-none" 
-                        placeholder="Tulis pesan Anda..."
-                      ></textarea>
-                    </div>
-                    <button className="flex items-center justify-center w-full px-8 py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 transition-all gap-2 active:scale-95">
-                      Kirim Pesan <Send className="w-5 h-5" />
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </FadeIn>
-          </section>
+        /* Timeline Styles */
+        .timeline-dot {
+            position: absolute;
+            left: -33px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #4F46E5;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
 
-        </div>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+    </style>
+</head>
+<body class="bg-pattern antialiased relative">
 
-        {/* RIGHT SIDEBAR (Sticky) */}
-        <aside className="lg:w-1/3 hidden lg:block">
-          <div className="sticky top-32 space-y-8">
+    <!-- Ornamen Background -->
+    <div class="blob-1 fixed"></div>
+    <div class="blob-2 fixed"></div>
+
+    <!-- Navigasi -->
+    <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#about" class="text-2xl font-heading font-bold text-primary tracking-tighter">
+                Porto<span class="text-secondary">Folio.</span>
+            </a>
             
-            {/* Profil Interaktif */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/20 group hover:border-blue-100 transition-colors">
-              <div className="flex justify-between items-start mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-emerald-400 rounded-2xl p-0.5 shadow-lg shadow-blue-600/20 transform -rotate-3 group-hover:rotate-0 transition-transform">
-                  <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center font-black text-2xl text-slate-800">
-                    DA
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <a href="#" className="p-2.5 bg-slate-50 text-slate-600 rounded-full hover:bg-blue-600 hover:text-white hover:scale-110 hover:shadow-lg transition-all">
-                    <Github className="w-5 h-5" />
-                  </a>
-                  <a href="#" className="p-2.5 bg-slate-50 text-slate-600 rounded-full hover:bg-blue-600 hover:text-white hover:scale-110 hover:shadow-lg transition-all">
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                </div>
-              </div>
-              
-              <h3 className="font-serif text-xl font-bold mb-1 text-slate-900">Daffa Rafi Al Faraz</h3>
-              <p className="text-sm text-slate-500 font-medium mb-6 flex items-center gap-1">
-                <MapPin className="w-4 h-4 text-emerald-500" /> Jakarta, Indonesia
-              </p>
+            <!-- Desktop Menu -->
+            <ul class="hidden md:flex space-x-8 font-medium text-sm text-gray-600">
+                <li><a href="#about" class="hover:text-secondary transition-colors">Tentang Saya</a></li>
+                <li><a href="#education" class="hover:text-secondary transition-colors">Pendidikan</a></li>
+                <li><a href="#experience" class="hover:text-secondary transition-colors">Pengalaman</a></li>
+                <li><a href="#karya" class="hover:text-secondary transition-colors">Karya</a></li>
+                <li><a href="#contact" class="px-5 py-2 bg-primary text-white rounded-full hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl">Kontak</a></li>
+            </ul>
 
-              <hr className="border-slate-100 mb-6" />
-
-              <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-4">Tech Stack ⚡</h4>
-              <div className="flex flex-wrap gap-2">
-                {['React.js', 'Python', 'Tailwind CSS', 'UI/UX', 'SQL', 'Node.js'].map(skill => (
-                  <span key={skill} className="px-3 py-1.5 bg-slate-50 border border-slate-100 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 rounded-lg text-xs font-bold text-slate-600 transition-colors cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Widget Status / Quote */}
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-3xl text-white relative overflow-hidden group">
-              <div className="absolute -right-4 -top-4 text-emerald-400 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all duration-500">
-                <Code className="w-32 h-32" />
-              </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                  </span>
-                  <span className="text-xs font-bold tracking-wider text-emerald-400 uppercase">Status</span>
-                </div>
-                <p className="font-serif font-bold text-xl leading-snug mb-2">
-                  Terbuka untuk kolaborasi proyek dan peluang kerja.
-                </p>
-                <p className="text-slate-400 text-sm font-medium">Fokus pada inovasi dan efisiensi. 🚀</p>
-              </div>
-            </div>
-
-          </div>
-        </aside>
-      </main>
-
-      {/* FOOTER */}
-      <footer className="border-t border-slate-100 mt-20 py-10 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <h1 className="text-xl font-black tracking-tighter text-slate-400">DR<span className="text-emerald-500">.</span></h1>
-          <p className="text-sm font-semibold text-slate-500">
-            Didesain & Dibangun dengan ☕ oleh Daffa Rafi © {new Date().getFullYear()}
-          </p>
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-2xl text-primary" id="mobile-menu-btn">
+                <i class="ph ph-list"></i>
+            </button>
         </div>
-      </footer>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div class="md:hidden hidden bg-white border-t border-gray-100 shadow-xl absolute w-full" id="mobile-menu">
+            <ul class="flex flex-col px-6 py-4 space-y-4 font-medium text-gray-600">
+                <li><a href="#about" class="mobile-link block">Tentang Saya</a></li>
+                <li><a href="#education" class="mobile-link block">Pendidikan</a></li>
+                <li><a href="#experience" class="mobile-link block">Pengalaman</a></li>
+                <li><a href="#karya" class="mobile-link block">Karya</a></li>
+                <li><a href="#contact" class="mobile-link block text-secondary font-bold">Kontak Saya</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Halaman 1: Tentang Saya (Hero Section) -->
+    <section id="about" class="min-h-screen flex items-center pt-24 pb-12 px-6 relative">
+        <div class="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
+            <div class="order-2 md:order-1 reveal z-10">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 text-secondary text-sm font-semibold mb-6 border border-indigo-100">
+                    <span class="relative flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+                    </span>
+                    Tersedia untuk Proyek Baru
+                </div>
+                <h1 class="text-5xl md:text-7xl font-heading font-extrabold text-primary leading-tight mb-4">
+                    Halo, Saya <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-blue-400">Daffa Rafi Al'Faraz</span> 👋
+                </h1>
+                <h2 class="text-2xl md:text-3xl text-gray-600 font-medium mb-6 h-10">
+                    Saya seorang <span id="typewriter-text" class="typewriter text-primary font-bold"></span>
+                </h2>
+                <p class="text-gray-500 leading-relaxed text-lg mb-8 max-w-lg">
+                    Saya mengintegrasikan desain dan pemikiran sistem untuk menghadirkan pengalaman digital yang estetis, fungsional, dan berdampak bagi perkembangan bisnis. 🚀
+                </p>
+                <div class="flex gap-4">
+                    <a href="#karya" class="px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 flex items-center gap-2">
+                        Lihat Karya <i class="ph ph-arrow-right"></i>
+                    </a>
+                    <a href="#contact" class="px-8 py-4 bg-white text-primary border border-gray-200 rounded-full font-semibold hover:bg-gray-50 transition-all flex items-center gap-2">
+                        Hubungi Saya
+                    </a>
+                </div>
+            </div>
+            
+            <div class="order-1 md:order-2 flex justify-center relative reveal">
+                <!-- Elemen Dekorasi di belakang foto -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-indigo-100 to-amber-50 rounded-full blur-3xl opacity-50 -z-10"></div>
+                <div class="relative w-full max-w-[600px] h-[700px]">
+                    <!-- Foto Profil Besar, Potrait, dan Blur di Bawah -->
+                    <img src="https://res.cloudinary.com/dvpm3w0ed/image/upload/v1774635721/Desain_tanpa_judul_3_yhst0g.png" 
+                         alt="Foto Profil Daffa Rafi Al'Faraz" 
+                         class="w-full h-full object-cover rounded-t-[4rem] profile-mask filter contrast-125 brightness-105">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Halaman 2: Pendidikan -->
+    <section id="education" class="py-24 px-6 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-heading font-bold text-primary mb-4">Pendidikan 🎓</h2>
+                <p class="text-gray-500">Perjalanan akademis dan fondasi ilmu saya.</p>
+            </div>
+            
+            <div class="relative border-l-2 border-gray-200 ml-6 md:ml-0 md:pl-8 space-y-12">
+                <!-- Item Pendidikan 1 -->
+                <div class="relative reveal glass-card p-8 rounded-2xl">
+                    <div class="timeline-dot hidden md:block"></div>
+                    <span class="px-3 py-1 bg-indigo-100 text-secondary text-xs font-bold rounded-full mb-4 inline-block">2025 - 2029</span>
+                    <h3 class="text-2xl font-bold text-primary">S1 Sistem Informatika</h3>
+                    <h4 class="text-lg text-gray-600 mb-4 font-medium"><i class="ph-fill ph-buildings mr-2 text-accent"></i>Sekolah Tinggi Informatika & Komputer</h4>
+                    <p class="text-gray-500 leading-relaxed">
+                        Jurusan Sistem Informasi mengajarkan bagaimana mengintegrasikan teknologi informasi dengan proses bisnis untuk menciptakan solusi yang efisien dan inovatif. Program ini membekali saya dengan kemampuan dalam pengembangan perangkat lunak, analisis data, serta pengelolaan sistem informasi yang mendukung keputusan strategis perusahaan.
+                    </p>
+                </div>
+
+                <!-- Item Pendidikan 2 -->
+                <div class="relative reveal glass-card p-8 rounded-2xl">
+                    <div class="timeline-dot hidden md:block" style="background-color: #F59E0B; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);"></div>
+                    <span class="px-3 py-1 bg-amber-100 text-accent text-xs font-bold rounded-full mb-4 inline-block">2023 - 2025</span>
+                    <h3 class="text-2xl font-bold text-primary">SMA Negeri 18 Jakarta</h3>
+                    <h4 class="text-lg text-gray-600 mb-4 font-medium"><i class="ph-fill ph-student mr-2 text-secondary"></i>Manajemen Perkantoran & Layanan Bisnis</h4>
+                    <p class="text-gray-500 leading-relaxed">
+                        Pendidikan di SMK Manajemen Perkantoran dan Layanan Bisnis memberikan pemahaman mendalam tentang administrasi perkantoran, pengelolaan layanan pelanggan, serta keterampilan dalam mengoptimalkan proses bisnis. Jurusan ini mempersiapkan saya untuk dapat memberikan pelayanan prima, mengelola kegiatan administrasi secara efisien, dan mendukung kelancaran operasional bisnis melalui keterampilan manajerial yang solid.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Halaman 3: Pengalaman -->
+    <section id="experience" class="py-24 px-6 bg-white relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-heading font-bold text-primary mb-4">Pengalaman & Keahlian 💼</h2>
+                <p class="text-gray-500">Jejak karir profesional dan pemetaan keterampilan.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-5 gap-12">
+                <!-- Kolom Pengalaman (Kiri - 3 Kolom) -->
+                <div class="lg:col-span-3 space-y-6">
+                    <!-- Exp 1 -->
+                    <div class="glass-card p-6 md:p-8 rounded-2xl border border-gray-100 reveal flex flex-col md:flex-row gap-6 items-start">
+                        <div class="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
+                            <i class="ph-fill ph-code text-3xl text-blue-600"></i>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap justify-between items-center mb-2">
+                                <h3 class="text-xl font-bold text-primary">Information Systems Student</h3>
+                                <span class="text-sm font-semibold text-gray-400">Januari 2025 - Juli 2029</span>
+                            </div>
+                            <h4 class="text-secondary font-medium mb-3">STI&K Jakarta</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-4">
+                                Mempelajari konsep sistem informasi, pengelolaan data, serta pengembangan solusi berbasis teknologi untuk kebutuhan bisnis.
+                                Mengembangkan pemahaman dalam analisis sistem, database, dan proses bisnis untuk mendukung pengambilan keputusan.
+                                Terlibat dalam berbagai project akademik yang berfokus pada perancangan sistem dan pemecahan masalah berbasis teknologi.
+                            </p>
+                            <div class="flex gap-2 flex-wrap">
+                                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">System Analysis</span>
+                                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Communication</span>
+                                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Database</span>
+                                 <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Microsoft Office</span>
+                                  <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Problem Solving</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exp 2 -->
+                    <div class="glass-card p-6 md:p-8 rounded-2xl border border-gray-100 reveal flex flex-col md:flex-row gap-6 items-start">
+                        <div class="w-16 h-16 bg-purple-50 rounded-xl flex items-center justify-center shrink-0">
+                            <i class="ph-fill ph-paint-brush text-3xl text-purple-600"></i>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap justify-between items-center mb-2">
+                                <h3 class="text-xl font-bold text-primary">Administrative & Office Support</h3>
+                                <span class="text-sm font-semibold text-gray-400">Januari 2025 - Juli 2025</span>
+                            </div>
+                            <h4 class="text-secondary font-medium mb-3">Walikota Jakarta Selatan</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-4">
+                                Bertanggung jawab dalam pengelolaan administrasi perkantoran, termasuk pengarsipan dokumen dan pencatatan data secara rapi dan terstruktur.
+                                Menyusun surat dan laporan menggunakan Microsoft Office untuk mendukung kebutuhan operasional.
+                                Membantu proses layanan dan komunikasi internal agar kegiatan perkantoran berjalan efektif.
+                                Memastikan seluruh dokumen dan data tersimpan dengan baik serta mudah diakses.
+                            </p>
+                            <div class="flex gap-2 flex-wrap">
+                                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Microsoft Office</span>
+                                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Administration</span>
+                                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Data Entry</span>
+                                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Communication</span>
+                                <span class="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">Teamwork</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kolom Grafik Keahlian (Kanan - 2 Kolom) -->
+                <div class="lg:col-span-2 glass-card p-8 rounded-2xl border border-gray-100 reveal flex flex-col justify-center">
+                    <h3 class="text-xl font-bold text-primary mb-6 text-center">Distribusi Keahlian 📊</h3>
+                    <div class="relative w-full aspect-square">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-gray-400 mt-6">Berdasarkan jam terbang dan kompleksitas proyek.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Halaman 4: Karya -->
+    <section id="karya" class="py-24 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+                <div>
+                    <h2 class="text-4xl font-heading font-bold text-primary mb-4">Karya Unggulan 🎨</h2>
+                    <p class="text-gray-500 max-w-xl">Kumpulan proyek yang saya kerjakan untuk mengembangkan kemampuan dan pengalaman di bidang digital.</p>
+                </div>
+                <button class="hidden md:flex items-center gap-2 text-secondary font-semibold hover:text-indigo-800 transition">
+                    Lihat Semua di GitHub <i class="ph-bold ph-arrow-up-right"></i>
+                </button>
+            </div>
+
+            <!-- Grid Karya -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Karya 1 -->
+                <div class="group rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 reveal border border-gray-100 cursor-pointer">
+                    <div class="relative h-64 overflow-hidden">
+                        <div class="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-all z-10"></div>
+                        <img src="https://res.cloudinary.com/dvpm3w0ed/image/upload/v1774637590/Cuplikan_layar_2026-03-28_015204_tupy7s.png" alt="Web Porto" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 z-20 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">Web Porto</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-primary mb-2 group-hover:text-secondary transition-colors">Personal Portofolio Website</h3>
+                        <p class="text-gray-500 text-sm mb-4">Website portofolio pribadi untuk menampilkan profil, project, dan informasi kontak secara profesional dalam satu platform digital.
+                            Dibuat dengan fokus pada tampilan yang rapi, responsif, dan mudah diakses di berbagai perangkat.</p>
+                        <div class="flex items-center gap-3 text-sm font-semibold text-gray-600">
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-file-code text-blue-500"></i> HTML</span>
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-database text-green-500"></i> CSS</span>
+                             <span class="flex items-center gap-1"><i class="ph-fill ph-database text-green-500"></i>JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Karya 2 -->
+                <div class="group rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 reveal border border-gray-100 cursor-pointer" style="transition-delay: 100ms;">
+                    <div class="relative h-64 overflow-hidden">
+                        <div class="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-all z-10"></div>
+                        <img src="https://res.cloudinary.com/dvpm3w0ed/image/upload/v1774637922/Cuplikan_layar_2026-03-27_174607_qxmnxy.png" alt="App" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 z-20 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">App</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-primary mb-2 group-hover:text-secondary transition-colors">Gesture Control App</h3>
+                        <p class="text-gray-500 text-sm mb-4">Aplikasi berbasis gesture untuk mengontrol scroll layar menggunakan pergerakan jari.
+                            Memanfaatkan sensor perangkat untuk mendeteksi input gerakan sehingga pengguna dapat melakukan navigasi tanpa sentuhan langsung.</p>
+                        <div class="flex items-center gap-3 text-sm font-semibold text-gray-600">
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-file-code text-blue-500"></i> Kotlin</span>
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-wind text-teal-500"></i> Android Std</span>
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-wind text-teal-500"></i> Sensor</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Karya 3 -->
+                <div class="group rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 reveal border border-gray-100 cursor-pointer" style="transition-delay: 200ms;">
+                    <div class="relative h-64 overflow-hidden">
+                        <div class="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-all z-10"></div>
+                        <img src="https://res.cloudinary.com/dvpm3w0ed/image/upload/v1774639115/611158b9-8caa-4bdf-aaa9-d829a2b8b942_vc7umq.jpg" alt="Bot Automation" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 z-20 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary">Bot Automation</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-primary mb-2 group-hover:text-secondary transition-colors">WhatsApp Bot Automation</h3>
+                        <p class="text-gray-500 text-sm mb-4">Mengembangkan bot WhatsApp untuk membantu otomatisasi berbagai perintah seperti download media, convert file, dan utility tools lainnya.
+                            Bot dijalankan menggunakan Node.js di lingkungan Termux dengan sistem command berbasis prefix.</p>
+                        <div class="flex items-center gap-3 text-sm font-semibold text-gray-600">
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-figma-logo text-pink-500"></i>Termux</span>
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-magic-wand text-purple-500"></i>API Intergration</span>
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-magic-wand text-purple-500"></i>Node.js</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center md:hidden reveal">
+                <button class="px-6 py-3 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-white transition w-full">
+                    Lihat Semua di GitHub
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Halaman 5: Kontak -->
+    <section id="contact" class="py-24 px-6 bg-primary text-white relative overflow-hidden">
+        <!-- Dekorasi Background Gelap -->
+        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-secondary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal">
+                    <h2 class="text-5xl md:text-6xl font-heading font-extrabold mb-6">Mari Berkolaborasi! 🤝</h2>
+                    <p class="text-gray-300 text-lg mb-12 max-w-lg">
+                        Punya proyek hebat atau sekadar ingin menyapa? Jangan ragu untuk menghubungi saya melalui saluran media sosial atau kontak di bawah ini. Saya sangat terbuka untuk diskusi bisnis dan tawaran menarik.
+                    </p>
+                    
+                    <!-- Sosial Media Links -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- WhatsApp Khusus (Sesuai Permintaan) -->
+                        <a href="https://wa.me/62881025610837" target="_blank" class="flex items-center gap-3 p-4 bg-white/10 hover:bg-green-500/20 hover:border-green-500 border border-white/10 rounded-xl transition-all group backdrop-blur-sm">
+                            <i class="ph-fill ph-whatsapp-logo text-3xl text-green-400 group-hover:scale-110 transition-transform"></i>
+                            <div>
+                                <p class="text-xs text-gray-400">Chat di</p>
+                                <p class="font-bold text-sm">WhatsApp</p>
+                            </div>
+                        </a>
+                        
+                        <!-- Instagram -->
+                        <a href="https://www.instagram.com/ekscavator__0" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="flex items-center gap-3 p-4 bg-white/10 hover:bg-pink-500/20 hover:border-pink-500 border border-white/10 rounded-xl transition-all group backdrop-blur-sm">
+
+                            <i class="ph-fill ph-instagram-logo text-3xl text-pink-400 group-hover:scale-110 transition-transform"></i>
+
+                            <div>
+                                <p class="text-xs text-gray-400">Ikuti di</p>
+                                <p class="font-bold text-sm">Instagram</p>
+                            </div>
+                        </a>
+
+                        <!-- TikTok -->
+                        <a href="#" class="flex items-center gap-3 p-4 bg-white/10 hover:bg-gray-500/30 hover:border-white/40 border border-white/10 rounded-xl transition-all group backdrop-blur-sm">
+                            <i class="ph-fill ph-tiktok-logo text-3xl text-white group-hover:scale-110 transition-transform"></i>
+                            <div>
+                                <p class="text-xs text-gray-400">Tonton di</p>
+                                <p class="font-bold text-sm">TikTok</p>
+                            </div>
+                        </a>
+
+                        <!-- LinkedIn -->
+                        <a href="#" class="flex items-center gap-3 p-4 bg-white/10 hover:bg-blue-600/30 hover:border-blue-500 border border-white/10 rounded-xl transition-all group backdrop-blur-sm">
+                            <i class="ph-fill ph-linkedin-logo text-3xl text-blue-400 group-hover:scale-110 transition-transform"></i>
+                            <div>
+                                <p class="text-xs text-gray-400">Koneksi di</p>
+                                <p class="font-bold text-sm">LinkedIn</p>
+                            </div>
+                        </a>
+
+                        <!-- Email -->
+                       <a href="https://mail.google.com/mail/?view=cm&fs=1&to=btcdaffa@gmail.com&su=Kerja Sama&body=Halo, saya tertarik dengan anda. Bisa kita bekerja sama? [Sebutkan detail kerjasama di sini]" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="flex items-center gap-3 p-4 bg-white/10 hover:bg-red-500/20 hover:border-red-500 border border-white/10 rounded-xl transition-all group backdrop-blur-sm col-span-2 md:col-span-1">
+
+                            <i class="ph-fill ph-envelope-simple text-3xl text-red-400 group-hover:scale-110 transition-transform"></i>
+
+                            <div>
+                                <p class="text-xs text-gray-400">Kirim</p>
+                                <p class="font-bold text-sm">Email</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Form Simulasi UI -->
+                <div class="bg-white rounded-3xl p-8 text-primary shadow-2xl reveal relative">
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-accent rounded-full -z-10 blur-xl opacity-50"></div>
+                    <h3 class="text-2xl font-bold mb-6">Kirim Pesan Langsung ✉️</h3>
+                    <form id="contact-form" class="space-y-4">
+                        <input type="hidden" name="_captcha" value="false">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">Nama Lengkap</label>
+                            <input type="text" name="name" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all" placeholder="John Doe" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">Email</label>
+                            <input type="email" name="email" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all" placeholder="john@company.com" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">Pesan / Ide Proyek</label>
+                            <textarea name="message" rows="4" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all resize-none" placeholder="Ceritakan tentang proyek Anda..." required></textarea>
+                        </div>
+                        <button type="submit" id="submit-btn" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-secondary hover:shadow-lg hover:shadow-secondary/30 transition-all transform hover:-translate-y-1">
+                            Kirim Pesan Sekarang
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 text-center border-t border-gray-800">
+        <p class="text-sm">© 2026 DAFFA RAFI AL FARAZ • ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <!-- Modal Animasi Sukses -->
+    <div id="success-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center transform scale-90 transition-transform duration-300" id="success-modal-content">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-500">
+                <i class="ph-bold ph-check text-5xl animate-bounce"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800">Terkirim!</h3>
+            <p class="text-gray-500 mt-2 text-center">Pesan Anda berhasil dikirim.</p>
+        </div>
     </div>
-  );
-}
+
+    <!-- Scripts Intraktif -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // 1. Navbar Scroll Effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('bg-white/80', 'backdrop-blur-md', 'shadow-sm');
+                    navbar.classList.remove('py-4');
+                    navbar.classList.add('py-2');
+                } else {
+                    navbar.classList.remove('bg-white/80', 'backdrop-blur-md', 'shadow-sm', 'py-2');
+                    navbar.classList.add('py-4');
+                }
+            });
+
+            // 2. Mobile Menu Toggle
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // 3. Scroll Reveal Animation (Intersection Observer)
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            // 4. Typewriter Effect
+            const words = ["Editor", "Digital Minded", "Organized", "Analytical"];
+            let i = 0;
+            let timer;
+            
+            function typingEffect() {
+                let word = words[i].split("");
+                var loopTyping = function() {
+                    if (word.length > 0) {
+                        document.getElementById('typewriter-text').innerHTML += word.shift();
+                    } else {
+                        setTimeout(deletingEffect, 2000);
+                        return false;
+                    }
+                    timer = setTimeout(loopTyping, 100);
+                };
+                loopTyping();
+            }
+
+            function deletingEffect() {
+                let word = words[i].split("");
+                var loopDeleting = function() {
+                    if (word.length > 0) {
+                        word.pop();
+                        document.getElementById('typewriter-text').innerHTML = word.join("");
+                    } else {
+                        if (words.length > (i + 1)) { i++; } else { i = 0; }
+                        typingEffect();
+                        return false;
+                    }
+                    timer = setTimeout(loopDeleting, 50);
+                };
+                loopDeleting();
+            }
+            typingEffect(); // Start effect
+
+            // 5. Chart.js Initialization (Grafik Keahlian)
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            
+            // Konfigurasi gradien untuk chart
+            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.5)'); // Secondary color (Indigo)
+            gradient.addColorStop(1, 'rgba(79, 70, 229, 0.05)');
+
+            const skillsChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Frontend (HTML/CSS/JS)', 'Frameworks (React/Vue)', 'UI/UX Design', 'Backend (Node.js)', 'Database', 'Animasi Web'],
+                    datasets: [{
+                        label: 'Tingkat Keahlian',
+                        data: [95, 88, 90, 75, 70, 85],
+                        backgroundColor: gradient,
+                        borderColor: '#4F46E5',
+                        pointBackgroundColor: '#F59E0B',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#F59E0B',
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0,0,0,0.05)' },
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            pointLabels: {
+                                font: { family: "'Inter', sans-serif", size: 11, weight: '600' },
+                                color: '#4b5563'
+                            },
+                            ticks: { display: false, min: 0, max: 100 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+                            titleFont: { family: "'Poppins', sans-serif" },
+                            bodyFont: { family: "'Inter', sans-serif" },
+                            padding: 12,
+                            cornerRadius: 8,
+                        }
+                    }
+                }
+            });
+
+            // 6. Form Submit Handler dengan Animasi & Pengiriman Email
+            const contactForm = document.getElementById('contact-form');
+            const successModal = document.getElementById('success-modal');
+            const successModalContent = document.getElementById('success-modal-content');
+            const submitBtn = document.getElementById('submit-btn');
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = 'Mengirim... <i class="ph ph-spinner animate-spin inline-block align-middle ml-2"></i>';
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+                    const formData = new FormData(contactForm);
+
+                    fetch("https://formsubmit.co/ajax/btcdaffa@gmail.com", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Tampilkan modal sukses
+                        successModal.classList.remove('opacity-0', 'pointer-events-none');
+                        successModalContent.classList.remove('scale-90');
+                        successModalContent.classList.add('scale-100');
+
+                        // Reset form
+                        contactForm.reset();
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+                        // Sembunyikan modal setelah 2.5 detik
+                        setTimeout(() => {
+                            successModal.classList.add('opacity-0', 'pointer-events-none');
+                            successModalContent.classList.remove('scale-100');
+                            successModalContent.classList.add('scale-90');
+                        }, 2500);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("Terjadi kesalahan saat mengirim pesan. Silakan coba lagi.");
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
